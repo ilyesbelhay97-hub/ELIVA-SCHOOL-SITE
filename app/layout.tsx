@@ -2,8 +2,22 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
 
+function getMetadataBase() {
+  const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+
+  if (configuredUrl) {
+    try {
+      return new URL(configuredUrl);
+    } catch {
+      // Keep builds resilient when a Vercel environment variable is empty or malformed.
+    }
+  }
+
+  return new URL("http://localhost:3000");
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: getMetadataBase(),
   title: "ELIVA SCHOOL — Les compétences qui créent des opportunités",
   description: "Formations pratiques, formateurs de terrain et accompagnement professionnel pour passer de la théorie à l’action.",
 };
