@@ -3,6 +3,7 @@ import { Footer } from "@/components/marketing/footer";
 import { Hero } from "@/components/marketing/hero";
 import { Navbar } from "@/components/marketing/navbar";
 import { TrustBadge } from "@/components/marketing/trust-badge";
+import { TrainersSection } from "@/components/marketing/trainers-section";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { categories, reasons, steps, faqs } from "@/lib/content";
@@ -36,6 +37,8 @@ export default async function Home() {
           {courses.map((course) => <CourseCard key={course.title} course={course} />)}
         </div>
       </section>
+
+      <TrainersSection />
 
       <section className="bg-ink py-20 text-white sm:py-28" id="a-propos">
         <div className="section-shell">

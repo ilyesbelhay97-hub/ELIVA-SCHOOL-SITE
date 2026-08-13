@@ -1,0 +1,4 @@
+import Link from "next/link";
+import { Footer } from "@/components/marketing/footer";
+import { Navbar } from "@/components/marketing/navbar";
+export default function TrainerRecruitmentThanksPage() { return <main><Navbar solid /><section className="section-shell py-28"><p className="eyebrow text-gold-dark">Candidature reçue</p><h1 className="mt-5 max-w-3xl text-5xl font-semibold leading-none tracking-[-0.06em] sm:text-7xl">Candidature envoyée avec succès.</h1><p className="mt-7 max-w-2xl text-base leading-7 text-ink/65">Merci. Votre profil a été ajouté à notre réseau interne de formateurs. Notre équipe pourra vous contacter lorsqu’une opportunité correspondant à votre expertise se présente.</p><Link href="/" className="mt-9 inline-flex min-h-12 items-center rounded-full bg-ink px-6 text-sm font-semibold text-white">Retour à l’accueil</Link></section><Footer /></main>; }
