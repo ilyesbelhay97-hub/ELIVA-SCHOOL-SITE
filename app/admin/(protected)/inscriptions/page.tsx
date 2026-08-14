@@ -1,2 +1,2 @@
-import { RegistrationsCrm } from "@/components/admin/registrations-crm";
-export default function AdminRegistrationsPage() { return <RegistrationsCrm />; }
+import { AdmissionsCrm } from "@/components/admin/admissions-crm";
+export default function AdminRegistrationsPage() { return <AdmissionsCrm />; }

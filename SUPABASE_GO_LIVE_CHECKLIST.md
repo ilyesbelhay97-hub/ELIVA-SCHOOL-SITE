@@ -24,6 +24,20 @@
 - [ ] Confirm buckets `course-covers` and `trainer-public` are public for reading.
 - [ ] Confirm uploads, updates, and deletes require the ELIVA admin policy.
 - [ ] Confirm CV access is only through `/api/admin/trainers/[id]/cv` and signed URLs.
+- [ ] Confirm private bucket `payment-receipts` exists, accepts JPEG/PNG/WebP only, and is limited to 5 MB.
+- [ ] Confirm payment receipts are opened only through the short-lived signed URL route.
+
+## Phase 9 admissions
+
+- [ ] Run `supabase/migrations/20260814100000_phase9_admissions.sql` in the target project if it is not already applied.
+- [ ] Confirm `admission_attempts`, `admission_events`, `admission_documents`, and `admission_payments` exist with RLS enabled.
+- [ ] Confirm the same `registrations.id` is used across prospect, pre-registration, and student stages.
+- [ ] Verify the initial-contact limit is 3 and one attempt per calendar day.
+- [ ] Verify dossier follow-ups have an independent limit of 3 and one per calendar day.
+- [ ] For a controlled online test, upload a receipt, verify it, and confirm only verified amounts count in `admission_payment_summary`.
+- [ ] Verify rejected receipts do not count and verified financial rows are not hard-deleted.
+- [ ] Verify presentiel final confirmation requires a complete dossier.
+- [ ] Verify online final confirmation requires full verified payment when a total is agreed.
 
 ## Authentication
 
