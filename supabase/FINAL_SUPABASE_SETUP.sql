@@ -38,7 +38,7 @@ alter table public.trainers_crm add column if not exists source text not null de
 
 create unique index if not exists trainers_public_slug_unique_idx on public.trainers_crm(public_slug) where public_slug is not null;
 create unique index if not exists trainers_public_application_unique_idx on public.trainers_crm(public_application_id) where public_application_id is not null;
-create or replace function public.set_updated_at() returns trigger language plpgsql as $$ begin new.updated_at = now(); return new; end $$;
+create or replace function public.set_updated_at() returns trigger language plpgsql security invoker set search_path = public as $$ begin new.updated_at = now(); return new; end $$;
 create or replace function public.eliva_is_admin() returns boolean language sql stable security invoker set search_path = public as $$ select coalesce((auth.jwt()->'app_metadata'->>'role') = 'admin', false) or lower(coalesce(auth.jwt()->>'email','')) = 'ilyesbelhay97@gmail.com' $$;
 revoke execute on function public.eliva_is_admin() from anon;
 grant execute on function public.eliva_is_admin() to authenticated;
@@ -57,8 +57,12 @@ drop policy if exists "admin_centers" on public.centers; create policy "admin_ce
 drop policy if exists "admin_center_interactions" on public.center_interactions; create policy "admin_center_interactions" on public.center_interactions for all to authenticated using (coalesce((auth.jwt()->'app_metadata'->>'role') = 'admin', false) or lower(coalesce(auth.jwt()->>'email','')) = 'ilyesbelhay97@gmail.com') with check (coalesce((auth.jwt()->'app_metadata'->>'role') = 'admin', false) or lower(coalesce(auth.jwt()->>'email','')) = 'ilyesbelhay97@gmail.com');
 
 drop view if exists public.public_trainers_cms;
-create view public.public_trainers_cms as select id, full_name, public_slug, is_public, public_title_fr, public_title_ar, public_bio_fr, public_bio_ar, public_expertise_fr, public_expertise_ar, public_credentials_fr, public_credentials_ar, public_photo_path, public_order, public_seo_title_fr, public_seo_title_ar, public_seo_description_fr, public_seo_description_ar from public.trainers_crm where is_public = true;
-revoke all on public.trainers_crm from anon; revoke all on public.public_trainers_cms from anon; grant select on public.public_trainers_cms to anon, authenticated;
+create view public.public_trainers_cms with (security_invoker = true) as select id, full_name, public_slug, is_public, public_title_fr, public_title_ar, public_bio_fr, public_bio_ar, public_expertise_fr, public_expertise_ar, public_credentials_fr, public_credentials_ar, public_photo_path, public_order, public_seo_title_fr, public_seo_title_ar, public_seo_description_fr, public_seo_description_ar from public.trainers_crm where is_public = true;
+drop policy if exists "public_read_public_trainers" on public.trainers_crm; create policy "public_read_public_trainers" on public.trainers_crm for select to anon using (is_public = true);
+revoke all on public.trainers_crm from anon; grant select (id, full_name, public_slug, is_public, public_title_fr, public_title_ar, public_bio_fr, public_bio_ar, public_expertise_fr, public_expertise_ar, public_credentials_fr, public_credentials_ar, public_photo_path, public_order, public_seo_title_fr, public_seo_title_ar, public_seo_description_fr, public_seo_description_ar) on public.trainers_crm to anon;
+revoke all on public.public_trainers_cms from anon; grant select on public.public_trainers_cms to anon, authenticated;
+revoke all on public.registrations from anon; grant insert on public.registrations to anon;
+revoke all on public.trainer_interactions, public.centers, public.center_interactions, public.admission_attempts, public.admission_events, public.admission_documents, public.admission_payments, public.admission_payment_summary from anon;
 grant select on public.categories, public.trainers, public.courses, public.course_sessions to anon, authenticated; grant insert on public.registrations to anon; grant all on public.registrations, public.trainers_crm, public.trainer_interactions, public.centers, public.center_interactions to authenticated;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types) values ('trainer-cv','trainer-cv',false,5242880,array['application/pdf']) on conflict (id) do update set public=false, file_size_limit=5242880, allowed_mime_types=array['application/pdf'];

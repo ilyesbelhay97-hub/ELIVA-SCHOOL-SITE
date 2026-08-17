@@ -1,13 +1,19 @@
+import "server-only";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+
+export function isAdminUser(user: { email?: string | null; app_metadata?: unknown } | null) {
+  const role = user?.app_metadata && typeof user.app_metadata === "object" && "role" in user.app_metadata ? user.app_metadata.role : undefined;
+  const configuredAdmins = (process.env.ADMIN_EMAILS ?? "").split(",").map((email) => email.trim().toLowerCase()).filter(Boolean);
+  const email = user?.email?.toLowerCase();
+  return Boolean(user && (role === "admin" || email === "ilyesbelhay97@gmail.com" || (email && configuredAdmins.includes(email))));
+}
 
 export async function requireAdmin() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const role = user?.app_metadata && typeof user.app_metadata === "object" && "role" in user.app_metadata ? user.app_metadata.role : undefined;
-  const configuredAdmins = (process.env.ADMIN_EMAILS ?? "").split(",").map((email) => email.trim().toLowerCase()).filter(Boolean);
-  const isApprovedEmail = user?.email?.toLowerCase() === "ilyesbelhay97@gmail.com" || (user?.email ? configuredAdmins.includes(user.email.toLowerCase()) : false);
-  if (!user || (role !== "admin" && !isApprovedEmail)) redirect("/admin/login");
+  if (!isAdminUser(user)) redirect("/admin/login");
+  if (!user) redirect("/admin/login");
   return { supabase, user };
 }
 

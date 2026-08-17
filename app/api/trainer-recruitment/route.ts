@@ -2,15 +2,13 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { trainerRecruitmentSchema } from "@/lib/validation/trainer-recruitment";
 import { createServiceClient } from "@/lib/supabase/service";
+import { consumeRateLimit, requestIdentifier } from "@/lib/security/rate-limit";
 
 const MAX_CV_BYTES = 5 * 1024 * 1024;
-const recentRequests = new Map<string, number>();
-
 export async function POST(request: Request) {
-  const address = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  const previous = recentRequests.get(address) ?? 0;
-  if (Date.now() - previous < 30_000) return NextResponse.json({ error: "Veuillez patienter avant de renvoyer une candidature." }, { status: 429 });
-  recentRequests.set(address, Date.now());
+  const limit = await consumeRateLimit("trainer-recruitment", requestIdentifier(request), 3600, 3);
+  if (limit.unavailable) return NextResponse.json({ error: "Le service est momentanément indisponible. Réessayez plus tard." }, { status: 503 });
+  if (!limit.allowed) return NextResponse.json({ error: "Trop de candidatures depuis cette connexion. Réessayez plus tard." }, { status: 429 });
   try {
     const formData = await request.formData();
     const cv = formData.get("cv");

@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-const links = [{ href: "/admin", label: "Vue d’ensemble" }, { href: "/admin/inscriptions", label: "Inscriptions" }, { href: "/admin/formations", label: "Formations CMS" }, { href: "/admin/formateurs", label: "Formateurs CRM" }, { href: "/admin/formateurs/publics", label: "Formateurs publics" }, { href: "/admin/centres", label: "Centres & Salles" }];
+const links = [{ href: "/admin", label: "Vue d’ensemble" }, { href: "/admin/inscriptions", label: "Inscriptions" }, { href: "/admin/finance", label: "Finance" }, { href: "/admin/formations", label: "Formations CMS" }, { href: "/admin/formateurs", label: "Formateurs CRM" }, { href: "/admin/formateurs/publics", label: "Formateurs publics" }, { href: "/admin/centres", label: "Centres & Salles" }];
 export function AdminShell({ children, email }: { children: React.ReactNode; email?: string }) {
   const pathname = usePathname(); const router = useRouter(); const [open, setOpen] = useState(false);
   async function signOut() { await createClient().auth.signOut(); router.replace("/admin/login"); router.refresh(); }

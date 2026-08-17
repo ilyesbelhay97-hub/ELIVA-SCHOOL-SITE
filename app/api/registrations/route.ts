@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { consumeRateLimit, requestIdentifier } from "@/lib/security/rate-limit";
 
 type RegistrationRequest = {
   fullName?: unknown; phone?: unknown; email?: unknown; formation?: unknown; courseName?: unknown; studyMode?: unknown; wilaya?: unknown; message?: unknown; consent?: unknown; sourcePage?: unknown; referrer?: unknown; utmSource?: unknown; utmMedium?: unknown; utmCampaign?: unknown; utmContent?: unknown; utmTerm?: unknown;
@@ -9,6 +10,9 @@ const text = (value: unknown) => typeof value === "string" ? value.trim() : "";
 const optionalText = (value: unknown) => { const result = text(value); return result || null; };
 
 export async function POST(request: Request) {
+  const limit = await consumeRateLimit("public-registration", requestIdentifier(request), 3600, 10);
+  if (limit.unavailable) return NextResponse.json({ error: "Le service est momentanément indisponible. Réessayez plus tard." }, { status: 503 });
+  if (!limit.allowed) return NextResponse.json({ error: "Trop de demandes depuis cette connexion. Réessayez plus tard." }, { status: 429 });
   let body: RegistrationRequest;
   try { body = await request.json() as RegistrationRequest; } catch { return NextResponse.json({ error: "Invalid request body." }, { status: 400 }); }
   const fullName = text(body.fullName); const phone = text(body.phone).replace(/[\s().-]/g, ""); const email = text(body.email); const wilaya = text(body.wilaya); const courseName = text(body.courseName); const studyMode = body.studyMode === "En ligne" ? "online" : body.studyMode === "Présentiel" ? "presentiel" : "";
