@@ -9,7 +9,7 @@ import { LocalizedCourseCard } from "@/components/i18n/localized-course-card";
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
-  return { title: t[locale].homeTitle + " | ELIVA SCHOOL", description: t[locale].homeLead, alternates: { canonical: "/" + locale, languages: { fr: "/fr", ar: "/ar" } } };
+  return { title: t[locale].homeTitle + " | Meritify Academy", description: t[locale].homeLead, alternates: { canonical: "/" + locale, languages: { fr: "/fr", ar: "/ar" } } };
 }
 
 function Hero({ locale, s }: { locale: Locale; s: typeof t[Locale] }) {
@@ -50,3 +50,4 @@ export default async function LocalizedHome({ params }: { params: Promise<{ loca
     <LocaleFooter locale={locale} />
   </main>;
 }
+

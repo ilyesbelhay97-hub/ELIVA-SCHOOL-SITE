@@ -18,8 +18,11 @@ function getMetadataBase() {
 
 export const metadata: Metadata = {
   metadataBase: getMetadataBase(),
-  title: "ELIVA SCHOOL — Les compétences qui créent des opportunités",
+  title: "Meritify Academy — Les compétences qui créent des opportunités",
+  applicationName: "Meritify Academy",
   description: "Formations pratiques, formateurs de terrain et accompagnement professionnel pour passer de la théorie à l’action.",
+  manifest: "/manifest.webmanifest",
+  icons: { icon: [{ url: "/brand/favicon-32.png", type: "image/png", sizes: "32x32" }, { url: "/brand/meritify-icon-192.png", type: "image/png", sizes: "192x192" }], apple: "/brand/meritify-icon-192.png" },
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

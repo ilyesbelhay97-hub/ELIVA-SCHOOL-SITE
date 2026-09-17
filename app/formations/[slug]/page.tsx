@@ -12,9 +12,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: CoursePageProps): Promise<Metadata> {
   const { slug } = await params;
   const course = getCourseBySlug(slug);
-  if (!course) return { title: "Formation introuvable | ELIVA SCHOOL" };
+  if (!course) return { title: "Formation introuvable | Meritify Academy" };
   return {
-    title: `${course.title} | ELIVA SCHOOL`,
+    title: `${course.title} | Meritify Academy`,
     description: course.promise,
     alternates: { canonical: `/formations/${course.slug}` },
     openGraph: { title: course.title, description: course.promise, type: "article", images: [{ url: course.coverImage, alt: course.title }] },
@@ -30,3 +30,4 @@ export default async function CourseDetailPage({ params }: CoursePageProps) {
   if (!trainer) notFound();
   return <CoursePage course={course} trainer={trainer} />;
 }
+

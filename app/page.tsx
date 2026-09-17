@@ -19,7 +19,7 @@ export default async function Home() {
       <Navbar />
       <Hero />
 
-      <section className="border-y border-ink/10 bg-white" aria-label="Les engagements ELIVA">
+      <section className="border-y border-ink/10 bg-white" aria-label="Les engagements Meritify">
         <div className="section-shell grid gap-0 sm:grid-cols-2 lg:grid-cols-4">
           <TrustBadge number="01" label="Apprendre en faisant" />
           <TrustBadge number="02" label="Des formateurs de terrain" />
@@ -43,7 +43,7 @@ export default async function Home() {
       <section className="bg-ink py-20 text-white sm:py-28" id="a-propos">
         <div className="section-shell">
           <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-            <SectionHeading dark eyebrow="La méthode ELIVA" title="Pas de théorie qui reste dans un carnet." description="Nous créons des espaces où l’on comprend, où l’on pratique et où l’on repart avec une compétence réellement utilisable." />
+            <SectionHeading dark eyebrow="La méthode Meritify" title="Pas de théorie qui reste dans un carnet." description="Nous créons des espaces où l’on comprend, où l’on pratique et où l’on repart avec une compétence réellement utilisable." />
             <div className="grid gap-px overflow-hidden rounded-2xl border border-white/15 bg-white/10 sm:grid-cols-2">
               {reasons.map((reason, index) => (
                 <article key={reason.title} className="bg-ink p-7 sm:p-8">
@@ -119,3 +119,5 @@ export default async function Home() {
     </main>
   );
 }
+
+

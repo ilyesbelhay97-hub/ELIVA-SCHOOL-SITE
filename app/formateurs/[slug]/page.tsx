@@ -15,10 +15,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: TrainerPageProps): Promise<Metadata> {
   const { slug } = await params;
   const trainer = getTrainerBySlug(slug);
-  if (!trainer) return { title: "Formateur introuvable | ELIVA SCHOOL" };
+  if (!trainer) return { title: "Formateur introuvable | Meritify Academy" };
 
   return {
-    title: `${trainer.name} — ${trainer.role} | ELIVA SCHOOL`,
+    title: `${trainer.name} — ${trainer.role} | Meritify Academy`,
     description: trainer.shortBio,
     alternates: { canonical: `/formateurs/${trainer.slug}` },
     openGraph: {
@@ -45,7 +45,7 @@ export default async function TrainerProfilePage({ params }: TrainerPageProps) {
             <Image src={trainer.image} alt={trainer.alt} fill priority sizes="(max-width: 1023px) 100vw, 40vw" className="object-cover object-[72%_center]" />
           </div>
           <div>
-            <p className="eyebrow mb-5 text-gold">Formateur ELIVA SCHOOL</p>
+            <p className="eyebrow mb-5 text-gold">Formateur Meritify Academy</p>
             <h1 className="max-w-3xl text-5xl font-semibold leading-[0.96] tracking-[-0.06em] sm:text-7xl">{trainer.name}</h1>
             <p className="mt-5 max-w-2xl text-xl leading-8 text-gold">{trainer.role}</p>
             <p className="mt-6 max-w-2xl text-base leading-7 text-white/65">{trainer.shortBio}</p>
@@ -63,3 +63,5 @@ export default async function TrainerProfilePage({ params }: TrainerPageProps) {
     </main>
   );
 }
+
+

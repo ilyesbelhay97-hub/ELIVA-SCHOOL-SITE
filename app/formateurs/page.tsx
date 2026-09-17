@@ -7,8 +7,8 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { trainers } from "@/lib/trainers";
 
 export const metadata: Metadata = {
-  title: "Nos formateurs | ELIVA SCHOOL",
-  description: "Découvrez les formateurs ELIVA SCHOOL : des professionnels de terrain en e-commerce, marketing digital, photographie, tourisme, petite enfance et pédagogie.",
+  title: "Nos formateurs | Meritify Academy",
+  description: "Découvrez les formateurs Meritify Academy : des professionnels de terrain en e-commerce, marketing digital, photographie, tourisme, petite enfance et pédagogie.",
 };
 
 export default function FormateursPage() {
@@ -21,7 +21,7 @@ export default function FormateursPage() {
             <p className="eyebrow mb-5 text-gold">L’expertise en action</p>
             <h1 className="max-w-4xl text-5xl font-semibold leading-[0.96] tracking-[-0.06em] sm:text-7xl">Des professionnels qui savent transmettre.</h1>
           </div>
-          <p className="max-w-xl text-base leading-7 text-white/65">Chez ELIVA SCHOOL, chaque parcours est porté par une personne qui pratique son métier et transforme son expérience en méthodes utiles.</p>
+          <p className="max-w-xl text-base leading-7 text-white/65">Chez Meritify Academy, chaque parcours est porté par une personne qui pratique son métier et transforme son expérience en méthodes utiles.</p>
         </div>
       </section>
       <section className="section-shell py-20 sm:py-28">
@@ -33,3 +33,4 @@ export default function FormateursPage() {
     </main>
   );
 }
+

@@ -17,7 +17,7 @@ export function TrainerCard({ trainer }: { trainer: Trainer }) {
           />
           <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-ink/80 to-transparent" aria-hidden />
           <span className="absolute bottom-4 left-4 rounded-full border border-white/20 bg-ink/75 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-white/80">
-            Formateur ELIVA
+            Formateur Meritify
           </span>
         </div>
       </Link>
@@ -38,3 +38,4 @@ export function TrainerCard({ trainer }: { trainer: Trainer }) {
     </article>
   );
 }
+

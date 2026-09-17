@@ -19,7 +19,7 @@ export const trainers: Trainer[] = [
     name: "Djebbour Mohamed",
     role: "Formateur international & expert commercial",
     image: "/images/trainers/ChatGPT Image 11 août 2026, 15_39_45.png",
-    alt: "Djebbour Mohamed, formateur international ELIVA SCHOOL",
+    alt: "Djebbour Mohamed, formateur international Meritify Academy",
     shortBio: "Formateur international spécialisé dans la formation de formateurs et le développement des compétences commerciales. Il accompagne les participants dans la prise de parole, la conception de programmes et la transmission professionnelle du savoir.",
     credibility: "Formateur international, diplômé et accrédité en formation",
     expertise: ["Prise de parole", "Pédagogie pour adultes", "Conception de formations", "Développement commercial"],
@@ -43,7 +43,7 @@ export const trainers: Trainer[] = [
     name: "Amina Mghizili",
     role: "Cadre marketing chez Air Algérie",
     image: "/images/trainers/ChatGPT Image 11 août 2026, 15_40_27.png",
-    alt: "Amina Mghizili, formatrice ELIVA SCHOOL",
+    alt: "Amina Mghizili, formatrice Meritify Academy",
     shortBio: "Professionnelle du marketing dans le secteur aérien, elle partage une expérience de terrain utile aux futurs agents de voyage et professionnels du tourisme.",
     credibility: "Cadre marketing chez Air Algérie, spécialiste du secteur aérien",
     expertise: ["Marketing touristique", "Transport aérien", "Relation client", "Métiers du voyage"],
@@ -143,3 +143,4 @@ export function getTrainerBySlug(slug: string) {
 export function getTrainerCourse(slug: string) {
   return trainers.find((trainer) => trainer.course.slug === slug)?.course;
 }
+

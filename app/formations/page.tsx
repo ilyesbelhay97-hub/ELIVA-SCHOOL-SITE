@@ -6,8 +6,8 @@ import { courseDetails, toCourseCard } from "@/lib/courses";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Formations professionnelles | ELIVA SCHOOL",
-  description: "Explorez les formations pratiques ELIVA SCHOOL en e-commerce, marketing digital, photographie, tourisme, petite enfance et pédagogie.",
+  title: "Formations professionnelles | Meritify Academy",
+  description: "Explorez les formations pratiques Meritify Academy en e-commerce, marketing digital, photographie, tourisme, petite enfance et pédagogie.",
 };
 
 export default function FormationsPage() {
@@ -16,7 +16,7 @@ export default function FormationsPage() {
       <Navbar solid />
       <section className="bg-ink py-20 text-white sm:py-28">
         <div className="section-shell">
-          <p className="eyebrow mb-5 text-gold">Les parcours ELIVA</p>
+          <p className="eyebrow mb-5 text-gold">Les parcours Meritify</p>
           <h1 className="max-w-4xl text-5xl font-semibold leading-[0.96] tracking-[-0.06em] sm:text-7xl">Des formations pour passer de l’intention à la pratique.</h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-white/65">Choisissez une compétence, rencontrez son expert et découvrez un format pensé pour votre prochain mouvement professionnel.</p>
         </div>
@@ -32,3 +32,5 @@ export default function FormationsPage() {
     </main>
   );
 }
+
+
