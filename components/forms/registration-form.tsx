@@ -7,6 +7,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { algerianWilayas } from "@/lib/algeria";
 import { submitRegistration, type RegistrationPayload } from "@/lib/registrations/submit-registration";
 import { track } from "@/lib/analytics/track";
+import { getWhatsAppHref } from "@/lib/contact";
 
 type CourseOption = { slug: string; title: string; modes: string[] };
 type FormValues = { fullName: string; phone: string; formation: string; studyMode: string; wilaya: string; email: string; message: string; consent: boolean };
@@ -55,9 +56,7 @@ export function RegistrationForm({ courseOptions, initialCourse }: { courseOptio
   }
 
   if (status === "success") {
-    const whatsappBase = process.env.NEXT_PUBLIC_WHATSAPP_URL;
-    const message = encodeURIComponent(`Bonjour, je m'appelle ${values.fullName}. Je suis intéressé(e) par ${selectedCourse?.title ?? values.formation} en mode ${values.studyMode}.`);
-    const whatsappHref = whatsappBase ? `${whatsappBase}${whatsappBase.includes("?") ? "&" : "?"}text=${message}` : undefined;
+    const whatsappHref = getWhatsAppHref(`Bonjour, je m'appelle ${values.fullName}. Je suis intéressé(e) par ${selectedCourse?.title ?? values.formation} en mode ${values.studyMode}.`);
     return <div className="rounded-3xl border border-gold/30 bg-gold/10 p-7 sm:p-10" role="status"><p className="eyebrow mb-4 text-gold-dark">Demande enregistrée ✓</p><h2 className="text-3xl font-semibold tracking-[-0.05em]">Votre demande est enregistrée ✓</h2><p className="mt-4 max-w-xl text-sm leading-6 text-ink/65">Merci {values.fullName.split(" ")[0]}. Nous vous contacterons prochainement pour confirmer votre inscription à la formation {selectedCourse?.title ?? values.formation}, en mode {values.studyMode}.</p><div className="mt-6 flex flex-wrap gap-3"><a className="inline-flex min-h-12 items-center rounded-full bg-ink px-5 text-sm font-semibold text-white" href="/inscription/merci">Voir la confirmation ↗</a>{whatsappHref && <a className="inline-flex min-h-12 items-center rounded-full border border-ink/15 px-5 text-sm font-semibold text-ink" href={whatsappHref} target="_blank" rel="noreferrer">Continuer sur WhatsApp ↗</a>}</div></div>;
   }
 

@@ -1,31 +1,20 @@
 import type { CourseDetail } from "@/lib/courses";
+import type { DetailedCourseContent } from "@/lib/course-content";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { CourseProgram } from "@/components/course/course-program";
 
-export function CourseSections({ course, compact = false }: { course: CourseDetail; compact?: boolean }) {
-  return (
-    <>
-      <section className={`${compact ? "py-12 sm:py-16" : "py-20 sm:py-28"} section-shell`}>
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-          <SectionHeading eyebrow="Pour qui ?" title="Un parcours pensé pour votre prochaine étape." />
-          <div className="grid gap-3 sm:grid-cols-2">{course.audience.map((item, index) => <div key={item} className="rounded-2xl border border-ink/10 bg-white p-5"><span className="font-mono text-xs text-gold-dark">0{index + 1}</span><p className="mt-8 font-semibold leading-6">{item}</p></div>)}</div>
-        </div>
-      </section>
-      <section className="border-y border-ink/10 bg-sand py-20 sm:py-28">
-        <div className="section-shell grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-          <SectionHeading eyebrow="Ce que vous allez apprendre" title="Des notions à transformer en réflexes." />
-          <div className="grid gap-3 sm:grid-cols-2">{course.topics.map((topic) => <div key={topic} className="flex gap-3 rounded-2xl border border-ink/10 bg-background p-5 text-sm font-semibold leading-6"><span className="text-gold-dark" aria-hidden>✦</span><span>{topic}</span></div>)}</div>
-        </div>
-      </section>
-      <section className={`${compact ? "py-12 sm:py-16" : "py-20 sm:py-28"} section-shell`}>
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-          <SectionHeading eyebrow="Programme" title="Un chemin lisible, module après module." />
-          <div className="divide-y divide-ink/10 border-y border-ink/10">{course.modules.map((module, index) => <details key={module.title} className="group py-5"><summary className="flex cursor-pointer list-none items-center gap-5 font-semibold tracking-tight [&::-webkit-details-marker]:hidden"><span className="font-mono text-xs text-gold-dark">0{index + 1}</span><span className="flex-1">{module.title}</span><span className="text-2xl font-light text-ink/40 transition group-open:rotate-45">+</span></summary><p className="pl-10 pt-3 text-sm leading-6 text-ink/60">{module.description}</p></details>)}</div>
-        </div>
-      </section>
-      {course.addedValue && <section className="border-y border-ink/10 bg-ink py-20 text-white sm:py-28"><div className="section-shell grid gap-10 lg:grid-cols-[0.8fr_1.2fr]"><SectionHeading dark eyebrow="Ce qui accompagne le parcours" title="Un cadre pour continuer à pratiquer." /><div className="grid gap-3 sm:grid-cols-2">{course.addedValue.map((item) => <div key={item} className="rounded-2xl border border-white/15 p-5 font-semibold text-white/80">{item}</div>)}</div></div></section>}
-      <section className={`${compact ? "py-12 sm:py-16" : "py-20 sm:py-28"} section-shell`}>
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]"><SectionHeading eyebrow="Questions fréquentes" title="Avant de commencer." /><div className="divide-y divide-ink/10 border-y border-ink/10">{course.faqs.map((faq) => <details key={faq.question} className="group py-5"><summary className="flex cursor-pointer list-none items-center justify-between gap-6 font-semibold tracking-tight [&::-webkit-details-marker]:hidden">{faq.question}<span className="text-2xl font-light text-ink/40 transition group-open:rotate-45">+</span></summary><p className="max-w-2xl pt-3 text-sm leading-6 text-ink/60">{faq.answer}</p></details>)}</div></div>
-      </section>
-    </>
-  );
+export function CourseSections({ course, content, compact = false, rtl = false }: { course: CourseDetail; content?: DetailedCourseContent | null; compact?: boolean; rtl?: boolean }) {
+  const details = content ?? { presentation: course.promise, objectives: course.topics, modules: course.modules.map((item) => ({ ...item, lessons: [] })), skills: course.benefits, audience: course.audience, methodology: course.practicalExperience ?? [], practicalInfo: [course.duration, course.mode, ...(course.schedule ? [course.schedule] : [])], certification: course.certificates?.join(" · "), faqs: course.faqs };
+  const spacing = compact ? "py-12 sm:py-16" : "py-20 sm:py-28";
+  return <>
+    <section id="presentation" className={`${spacing} section-shell`}><div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]"><SectionHeading eyebrow={rtl ? "📖 عن التكوين" : "📖 Présentation"} title={rtl ? "مسار واضح نحو مهارة قابلة للتطبيق." : "Un parcours clair vers une compétence utile."} /><p className="max-w-3xl text-lg leading-8 text-ink/65">{details.presentation}</p></div></section>
+    <section id="objectifs" className="border-y border-ink/10 bg-sand py-16 sm:py-24"><div className="section-shell grid gap-10 lg:grid-cols-[0.8fr_1.2fr]"><SectionHeading eyebrow={rtl ? "🎯 أهداف الدورة" : "🎯 Objectifs"} title={rtl ? "ما الذي ستتمكن من تطويره؟" : "Ce que vous allez développer."} /><div className="grid gap-3 sm:grid-cols-2">{details.objectives.map((item, index) => <div key={item} className="rounded-2xl border border-ink/10 bg-background p-5"><span className="font-mono text-xs text-gold-dark">{String(index + 1).padStart(2, "0")}</span><p className="mt-5 font-semibold leading-6">{item}</p></div>)}</div></div></section>
+    <section id="programme" className={`${spacing} section-shell`}><div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]"><SectionHeading eyebrow={rtl ? "📚 البرنامج التدريبي" : "📚 Programme"} title={rtl ? "وحدات مرتبة، تطبيق خطوة بخطوة." : "Des modules structurés, une pratique progressive."} /><CourseProgram modules={details.modules} rtl={rtl} /></div></section>
+      <section id="competences" className="border-y border-ink/10 bg-ink py-16 text-white sm:py-24"><div className="section-shell grid gap-10 lg:grid-cols-[0.8fr_1.2fr]"><SectionHeading dark eyebrow={rtl ? "🏆 المهارات المكتسبة" : "🏆 Compétences acquises"} title={rtl ? "معارف تتحول إلى ممارسة." : "Des acquis qui deviennent des réflexes."} /><div className="grid gap-3 sm:grid-cols-2">{details.skills.map((item) => <div key={item} className="rounded-2xl border border-white/15 p-5 font-semibold text-white/85">{item}</div>)}</div></div></section>
+      <section id="public" className={`${spacing} section-shell`}><div className="grid gap-10 lg:grid-cols-2"><div><SectionHeading eyebrow={rtl ? "👥 لمن هذه الدورة؟" : "👥 Pour qui ?"} title={rtl ? "مصمم لخطوتك المهنية القادمة." : "Pensé pour votre prochaine étape."} /></div><div className="grid gap-3 sm:grid-cols-2">{details.audience.map((item, index) => <div key={item} className="rounded-2xl border border-ink/10 bg-white p-5"><span className="font-mono text-xs text-gold-dark">{String(index + 1).padStart(2, "0")}</span><p className="mt-6 font-semibold leading-6">{item}</p></div>)}</div></div></section>
+      <section id="methodologie" className="border-y border-ink/10 bg-sand py-16 sm:py-24"><div className="section-shell grid gap-10 lg:grid-cols-[0.8fr_1.2fr]"><SectionHeading eyebrow={rtl ? "🛠️ منهجية التدريب" : "🛠️ Méthodologie"} title={rtl ? "نتعلم بالفهم والتطبيق." : "Comprendre, pratiquer, progresser."} /><div className="grid gap-3 sm:grid-cols-2">{details.methodology.map((item) => <div key={item} className="rounded-2xl bg-background p-5 font-semibold leading-6"><span className="mr-2 text-gold-dark">✦</span>{item}</div>)}</div></div></section>
+      <section id="informations" className={`${spacing} section-shell`}><div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]"><SectionHeading eyebrow={rtl ? "📍 معلومات الدورة" : "📍 Informations pratiques"} title={rtl ? "كل ما تحتاج معرفته قبل الانطلاق." : "Les repères utiles avant de commencer."} /><div className="grid gap-3 sm:grid-cols-2">{details.practicalInfo.map((item) => <div key={item} className="rounded-2xl border border-ink/10 bg-white p-5 font-semibold leading-6">{item}</div>)}</div></div></section>
+      {details.certification && <section id="certification" className="section-shell pb-16 sm:pb-24"><div className="rounded-3xl border border-gold/30 bg-gold/10 p-7 sm:p-10"><p className="eyebrow text-gold-dark">{rtl ? "📜 الشهادة" : "📜 Attestation / certificat"}</p><p className="mt-5 max-w-3xl leading-7 text-ink/70">{details.certification}</p></div></section>}
+      <section id="faq" className={`${spacing} section-shell`}><div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]"><SectionHeading eyebrow={rtl ? "❓ الأسئلة الشائعة" : "❓ Questions fréquentes"} title={rtl ? "قبل أن تبدأ." : "Avant de commencer."} /><div className="divide-y divide-ink/10 rounded-3xl border border-ink/10 bg-white px-6">{details.faqs.map((item) => <details key={item.question} className="group py-5"><summary className="flex cursor-pointer list-none items-center justify-between gap-6 font-semibold [&::-webkit-details-marker]:hidden">{item.question}<span className="text-2xl font-light text-ink/40 transition group-open:rotate-45">+</span></summary><p className="max-w-2xl pt-3 text-sm leading-7 text-ink/60">{item.answer}</p></details>)}</div></div></section>
+  </>;
 }

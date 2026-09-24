@@ -1,4 +1,5 @@
 import type { Course } from "@/lib/content";
+import { trainerImages } from "@/lib/trainer-images";
 
 export type Trainer = {
   slug: string;
@@ -18,7 +19,7 @@ export const trainers: Trainer[] = [
     slug: "djebbour-mohamed",
     name: "Djebbour Mohamed",
     role: "Formateur international & expert commercial",
-    image: "/images/trainers/ChatGPT Image 11 août 2026, 15_39_45.png",
+    image: trainerImages["djebbour-mohamed"],
     alt: "Djebbour Mohamed, formateur international Meritify Academy",
     shortBio: "Formateur international spécialisé dans la formation de formateurs et le développement des compétences commerciales. Il accompagne les participants dans la prise de parole, la conception de programmes et la transmission professionnelle du savoir.",
     credibility: "Formateur international, diplômé et accrédité en formation",
@@ -42,7 +43,7 @@ export const trainers: Trainer[] = [
     slug: "amina-mghizili",
     name: "Amina Mghizili",
     role: "Cadre marketing chez Air Algérie",
-    image: "/images/trainers/ChatGPT Image 11 août 2026, 15_40_27.png",
+    image: trainerImages["amina-mghizili"],
     alt: "Amina Mghizili, formatrice Meritify Academy",
     shortBio: "Professionnelle du marketing dans le secteur aérien, elle partage une expérience de terrain utile aux futurs agents de voyage et professionnels du tourisme.",
     credibility: "Cadre marketing chez Air Algérie, spécialiste du secteur aérien",
@@ -66,7 +67,7 @@ export const trainers: Trainer[] = [
     slug: "toufik-derdour",
     name: "Toufik Derdour",
     role: "Formateur international en photographie",
-    image: "/images/trainers/ChatGPT Image 11 août 2026, 15_40_58.png",
+    image: trainerImages["toufik-derdour"],
     alt: "Toufik Derdour, formateur international en photographie",
     shortBio: "Photographe et formateur international avec plus de 11 ans d’expérience, spécialisé dans la pratique de la photographie et l’accompagnement des apprenants vers une maîtrise professionnelle de l’image.",
     credibility: "Plus de 11 ans d’expérience et membre de la FIAP",
@@ -90,7 +91,7 @@ export const trainers: Trainer[] = [
     slug: "safa-belkharchouche",
     name: "Safa Belkharchouche",
     role: "Formatrice en petite enfance",
-    image: "/images/trainers/safa-belkharchouche.webp",
+    image: trainerImages["safa-belkharchouche"],
     alt: "Safa Belkharchouche, formatrice en petite enfance",
     shortBio: "Formatrice spécialisée dans la petite enfance, l’encadrement pédagogique et la gestion des structures d’accueil pour enfants.",
     credibility: "Spécialiste de la petite enfance et de la gestion de crèche",
@@ -114,7 +115,7 @@ export const trainers: Trainer[] = [
     slug: "ilyes-belhay",
     name: "Ilyes Belhay",
     role: "Formateur E-commerce & Marketing Digital",
-    image: "/images/trainers/ilyes-belhay.webp",
+    image: trainerImages["ilyes-belhay"],
     alt: "Ilyes Belhay, formateur en e-commerce et marketing digital",
     shortBio: "Formateur spécialisé en e-commerce et marketing digital, avec plus de 9 ans d’expérience terrain dans le business en ligne, l’acquisition client et le développement de projets e-commerce.",
     credibility: "Plus de 9 ans d’expérience terrain en business en ligne",

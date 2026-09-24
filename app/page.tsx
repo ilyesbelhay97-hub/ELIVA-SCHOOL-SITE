@@ -92,7 +92,7 @@ export default async function Home() {
             <p className="eyebrow mb-5 text-ink/60">Pour les équipes ambitieuses</p>
             <h2 className="max-w-xl text-4xl font-semibold leading-[0.98] tracking-[-0.06em] sm:text-6xl">Faites grandir les compétences qui font avancer votre entreprise.</h2>
             <p className="mt-6 max-w-lg text-base leading-7 text-ink/70">Ateliers sur mesure, formats intra-entreprise et accompagnement concret pour vos équipes.</p>
-            <Button className="mt-8" href="mailto:bonjour@eliva.school" variant="dark">Parler de votre projet <span aria-hidden>↗</span></Button>
+            <Button className="mt-8" href="mailto:contact@meritifyacademy.com" variant="dark">Parler de votre projet <span aria-hidden>↗</span></Button>
           </div>
           <div className="absolute -right-16 -top-20 h-72 w-72 rounded-full border-[28px] border-ink/10 sm:h-96 sm:w-96" aria-hidden />
           <div className="absolute -bottom-28 right-24 h-52 w-52 rounded-full bg-ink/10" aria-hidden />

@@ -49,7 +49,7 @@ export default async function TrainerProfilePage({ params }: TrainerPageProps) {
             <h1 className="max-w-3xl text-5xl font-semibold leading-[0.96] tracking-[-0.06em] sm:text-7xl">{trainer.name}</h1>
             <p className="mt-5 max-w-2xl text-xl leading-8 text-gold">{trainer.role}</p>
             <p className="mt-6 max-w-2xl text-base leading-7 text-white/65">{trainer.shortBio}</p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row"><Button href={`/formations/${trainer.course.slug}`}>Découvrir la formation <span aria-hidden>↗</span></Button><Button href="mailto:bonjour@eliva.school" variant="text" className="border-white/30 text-white hover:border-white">S’inscrire / être conseillé</Button></div>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row"><Button href={`/formations/${trainer.course.slug}`}>Découvrir la formation <span aria-hidden>↗</span></Button><Button href="mailto:contact@meritifyacademy.com" variant="text" className="border-white/30 text-white hover:border-white">S’inscrire / être conseillé</Button></div>
           </div>
         </div>
       </section>

@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { localizedCourse, type Locale } from "@/lib/i18n";
+import { getCourseImage } from "@/lib/course-images";
+import { getTrainerImage } from "@/lib/trainer-images";
 
 export type CmsCourse = {
   id: string; slug: string; title_fr: string; title_ar: string; short_description_fr: string | null; short_description_ar: string | null; hero_headline_fr: string | null; hero_headline_ar: string | null; modules_fr: unknown[]; modules_ar: unknown[]; faq_fr: unknown[]; faq_ar: unknown[]; study_modes: string[]; wilayas: string[]; price: number | null; seats_available: number | null; next_session_date: string | null; cover_image_path: string | null; publish_status: string; display_order: number; featured: boolean; trainer_id: string | null; seo_title_fr: string | null; seo_title_ar: string | null; seo_description_fr: string | null; seo_description_ar: string | null; trainers_crm?: { full_name: string; public_slug: string | null; is_public: boolean; public_photo_path: string | null } | null;
@@ -33,11 +35,12 @@ export async function getCmsCourse(slug: string) {
 
 export async function getCmsTrainers() {
   const supabase = await createClient();
-  return supabase.from("public_trainers_cms").select("*").order("public_order").order("full_name");
+  const result = await supabase.from("public_trainers_cms").select("*").order("public_order").order("full_name");
+  return { ...result, data: result.data?.map((trainer) => ({ ...trainer, public_photo_path: getTrainerImage(trainer.public_slug ?? "", trainer.public_photo_path) })) ?? null };
 }
 
 export function cmsCourseToLocalized(course: CmsCourse, locale: Locale) {
-  return { slug: course.slug, title: locale === "ar" ? course.title_ar : course.title_fr, category: locale === "ar" ? "دورات مهنية" : "Formation professionnelle", promise: (locale === "ar" ? course.short_description_ar : course.short_description_fr) ?? "", benefits: [], coverImage: course.cover_image_path ?? undefined, trainer: course.trainers_crm?.full_name ?? "" };
+  return { slug: course.slug, title: locale === "ar" ? course.title_ar : course.title_fr, category: locale === "ar" ? "دورات مهنية" : "Formation professionnelle", promise: (locale === "ar" ? course.short_description_ar : course.short_description_fr) ?? "", benefits: [], coverImage: getCourseImage(course.slug, course.cover_image_path), trainer: course.trainers_crm?.full_name ?? "" };
 }
 
 export function fallbackCmsCourse(slug: string, locale: Locale) {

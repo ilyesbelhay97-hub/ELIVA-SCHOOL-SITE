@@ -27,7 +27,7 @@ export default function FormationsPage() {
           {courseDetails.map((course) => <div id={course.slug} key={course.slug}><CourseCard course={toCourseCard(course)} /></div>)}
         </div>
       </section>
-      <section className="bg-sand py-16 sm:py-20"><div className="section-shell flex flex-col justify-between gap-6 sm:flex-row sm:items-center"><div><p className="eyebrow mb-3 text-gold-dark">Besoin d’orientation ?</p><h2 className="text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">Parlons de votre prochaine compétence.</h2></div><a className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white transition hover:bg-gold" href="mailto:bonjour@eliva.school">Écrire à l’équipe ↗</a></div></section>
+      <section className="bg-sand py-16 sm:py-20"><div className="section-shell flex flex-col justify-between gap-6 sm:flex-row sm:items-center"><div><p className="eyebrow mb-3 text-gold-dark">Besoin d’orientation ?</p><h2 className="text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">Parlons de votre prochaine compétence.</h2></div><a className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white transition hover:bg-gold" href="mailto:contact@meritifyacademy.com">Écrire à l’équipe ↗</a></div></section>
       <Footer />
     </main>
   );
