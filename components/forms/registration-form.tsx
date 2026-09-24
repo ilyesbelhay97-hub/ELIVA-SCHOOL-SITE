@@ -7,6 +7,8 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { algerianWilayas } from "@/lib/algeria";
 import { submitRegistration, type RegistrationPayload } from "@/lib/registrations/submit-registration";
 import { track } from "@/lib/analytics/track";
+import { trackMetaEvent } from "@/lib/analytics/meta";
+import { getAttribution } from "@/lib/analytics/attribution";
 import { getWhatsAppHref } from "@/lib/contact";
 
 type CourseOption = { slug: string; title: string; modes: string[] };
@@ -51,8 +53,8 @@ export function RegistrationForm({ courseOptions, initialCourse }: { courseOptio
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (!validate()) return; setStatus("loading");
     track("submit_registration", { formation: values.formation, studyMode: values.studyMode });
-    const payload: RegistrationPayload = { fullName: values.fullName.trim(), phone: values.phone.trim(), formation: values.formation, courseName: selectedCourse?.title ?? values.formation, studyMode: values.studyMode, wilaya: values.wilaya.trim(), email: values.email.trim() || undefined, message: values.message.trim() || undefined, consent: values.consent, status: "new", ...getTrackingContext() };
-    try { const result = await submitRegistration(payload); if (!result.ok) throw new globalThis.Error("submission failed"); track("registration_success", { formation: values.formation }); setStatus("success"); } catch { setStatus("error"); }
+    const payload: RegistrationPayload = { fullName: values.fullName.trim(), phone: values.phone.trim(), formation: values.formation, courseName: selectedCourse?.title ?? values.formation, studyMode: values.studyMode, wilaya: values.wilaya.trim(), email: values.email.trim() || undefined, message: values.message.trim() || undefined, consent: values.consent, status: "new", ...getTrackingContext(), ...getAttribution() };
+    try { const result = await submitRegistration(payload); if (!result.ok) throw new globalThis.Error("submission failed"); track("registration_success", { formation: values.formation }); trackMetaEvent("Lead", { content_name: payload.courseName, content_category: "formation", course_id: payload.formation, study_mode: payload.studyMode, locale: document.documentElement.lang }); setStatus("success"); } catch { setStatus("error"); }
   }
 
   if (status === "success") {

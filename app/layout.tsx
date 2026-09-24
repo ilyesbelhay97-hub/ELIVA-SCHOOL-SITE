@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
+import { MetaPixel } from "@/components/analytics/meta-pixel";
 
 function getMetadataBase() {
   const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
@@ -27,5 +28,5 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const locale = (await headers()).get("x-eliva-locale") === "ar" ? "ar" : "fr";
-  return <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}><body>{children}</body></html>;
+  return <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}><body><MetaPixel />{children}</body></html>;
 }
