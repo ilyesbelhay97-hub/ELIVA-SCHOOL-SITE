@@ -18,14 +18,27 @@ export async function POST(request: Request) {
       if (registration.error || !registration.data || registration.data.course_id !== courseId) return NextResponse.json({ error: "Inscription CRM introuvable ou liée à une autre formation." }, { status: 400 });
       const payment = await service.from("finance_payments").select("id").eq("registration_id", registrationId).eq("status", "verified").is("voided_at", null).limit(1).maybeSingle();
       if (payment.error || !payment.data) return NextResponse.json({ error: "Activation refusée : aucun versement vérifié n’est lié à cette inscription." }, { status: 409 });
+    } else {
+      const trainerId = body.trainer_id;
+      if (!trainerId) return NextResponse.json({ error: "Formateur CRM obligatoire." }, { status: 400 });
+      const trainer = await service.from("trainers_crm").select("id").eq("id", trainerId).maybeSingle();
+      if (trainer.error || !trainer.data) return NextResponse.json({ error: "Formateur CRM introuvable." }, { status: 400 });
     }
     const users = await service.auth.admin.listUsers({ page: 1, perPage: 1000 }); if (users.error) throw users.error;
     let account = users.data.users.find((candidate: { email?: string | null }) => candidate.email?.toLowerCase() === email);
     if (!account) { const created = await service.auth.admin.createUser({ email, email_confirm: true, password: crypto.randomUUID() }); if (created.error || !created.data.user) throw created.error ?? new Error("Compte impossible à créer."); account = created.data.user; }
-    const profileData = { user_id: account.id, user_type: body.role, trainer_id: body.role === "trainer" ? body.trainer_id : null, display_name: body.display_name?.trim() || email, active: true };
-    const existingProfile = await service.from("lms_profiles").select("user_id").eq("user_id", account.id).maybeSingle();
+    const existingProfile = await service.from("lms_profiles").select("user_id,user_type,trainer_id").eq("user_id", account.id).maybeSingle();
     if (existingProfile.error) throw existingProfile.error;
-    const profile = existingProfile.data ? await service.from("lms_profiles").update(profileData).eq("user_id", account.id).select("user_id").single() : await service.from("lms_profiles").insert(profileData).select("user_id").single();
+    if (existingProfile.data) return NextResponse.json({ error: "Ce compte possède déjà un profil LMS. Aucun doublon n’a été créé." }, { status: 409 });
+    if (body.role === "trainer") {
+      const trainerId = body.trainer_id;
+      if (!trainerId) return NextResponse.json({ error: "Formateur CRM obligatoire." }, { status: 400 });
+      const linkedTrainer = await service.from("lms_profiles").select("user_id").eq("user_type", "trainer").eq("trainer_id", trainerId).limit(1).maybeSingle();
+      if (linkedTrainer.error) throw linkedTrainer.error;
+      if (linkedTrainer.data) return NextResponse.json({ error: "Ce formateur est déjà lié à un compte LMS." }, { status: 409 });
+    }
+    const profileData = { user_id: account.id, user_type: body.role, trainer_id: body.role === "trainer" ? body.trainer_id : null, display_name: body.display_name?.trim() || email, active: true };
+    const profile = await service.from("lms_profiles").insert(profileData).select("user_id").single();
     if (profile.error) throw profile.error;
     if (body.role === "student") {
       const courseId = body.course_id;
