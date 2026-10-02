@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   try {
     if (!isSameOrigin(request)) return NextResponse.json({ error: "Origine non autorisée." }, { status: 403 });
     await requireAdmin();
-    const body = await request.json() as { email?: string; display_name?: string; role?: "student" | "trainer"; trainer_id?: string; course_id?: string; registration_id?: string; access_end?: string | null };
+    const body = await request.json() as { email?: string; display_name?: string; role?: "student" | "trainer"; trainer_id?: string; course_id?: string; registration_id?: string; access_end?: string | null; locale?: "fr" | "ar" };
     const email = body.email?.trim().toLowerCase(); if (!email || !body.role || (body.role === "student" && !body.course_id) || (body.role === "trainer" && !body.trainer_id)) return NextResponse.json({ error: "Email, rôle et lien LMS obligatoires." }, { status: 400 });
     const service = createServiceClient();
     if (body.role === "student") {
@@ -26,7 +26,17 @@ export async function POST(request: Request) {
     }
     const users = await service.auth.admin.listUsers({ page: 1, perPage: 1000 }); if (users.error) throw users.error;
     let account = users.data.users.find((candidate: { email?: string | null }) => candidate.email?.toLowerCase() === email);
-    if (!account) { const created = await service.auth.admin.createUser({ email, email_confirm: true, password: crypto.randomUUID() }); if (created.error || !created.data.user) throw created.error ?? new Error("Compte impossible à créer."); account = created.data.user; }
+    let invitedAccount = false;
+    if (!account) {
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meritifyacademy.com";
+      const locale = body.locale === "ar" ? "ar" : "fr";
+      const redirectUrl = new URL("/auth/callback", siteUrl);
+      redirectUrl.searchParams.set("next", `/${locale}/login?invite=1`);
+      const invited = await service.auth.admin.inviteUserByEmail(email, { redirectTo: redirectUrl.toString() });
+      if (invited.error || !invited.data.user) throw invited.error ?? new Error("Invitation impossible.");
+      account = invited.data.user;
+      invitedAccount = true;
+    }
     const existingProfile = await service.from("lms_profiles").select("user_id,user_type,trainer_id").eq("user_id", account.id).maybeSingle();
     if (existingProfile.error) throw existingProfile.error;
     if (existingProfile.data) return NextResponse.json({ error: "Ce compte possède déjà un profil LMS. Aucun doublon n’a été créé." }, { status: 409 });
@@ -39,7 +49,14 @@ export async function POST(request: Request) {
     }
     const profileData = { user_id: account.id, user_type: body.role, trainer_id: body.role === "trainer" ? body.trainer_id : null, display_name: body.display_name?.trim() || email, active: true };
     const profile = await service.from("lms_profiles").insert(profileData).select("user_id").single();
-    if (profile.error) throw profile.error;
+    if (profile.error) {
+      console.error("LMS profile creation failed:", profile.error.message);
+      if (invitedAccount) {
+        const cleanup = await service.auth.admin.deleteUser(account.id);
+        if (cleanup.error) console.error("LMS invited account cleanup failed:", cleanup.error.message);
+      }
+      return NextResponse.json({ error: "Le profil LMS n’a pas pu être créé. L’opération a été annulée en sécurité." }, { status: 500 });
+    }
     if (body.role === "student") {
       const courseId = body.course_id;
       const registrationId = body.registration_id;
@@ -50,6 +67,6 @@ export async function POST(request: Request) {
       const enrollment = existingEnrollment.data ? await service.from("lms_enrollments").update(enrollmentData).eq("id", String(existingEnrollment.data.id)) : await service.from("lms_enrollments").insert(enrollmentData);
       if (enrollment.error) throw enrollment.error;
     }
-    return NextResponse.json({ ok: true, user_id: account.id });
+    return NextResponse.json({ ok: true, user_id: account.id, invitation_sent: invitedAccount });
   } catch (error) { console.error("LMS activation failed:", error instanceof Error ? error.message : "unknown"); return NextResponse.json({ error: "Activation LMS impossible. Vérifiez la configuration Supabase serveur." }, { status: 500 }); }
 }
