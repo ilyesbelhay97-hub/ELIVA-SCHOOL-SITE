@@ -3,4 +3,31 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { requireAdmin } from "@/lib/supabase/admin";
 import { isSameOrigin } from "@/lib/security/request";
 
-export async function POST(request: Request) { let path = ""; try { if (!isSameOrigin(request)) return NextResponse.json({ error: "Origine non autorisée." }, { status: 403 }); await requireAdmin(); const form = await request.formData(); const file = form.get("file"); const titleFr = String(form.get("title_fr") ?? "").trim(); const titleAr = String(form.get("title_ar") ?? "").trim(); const lessonId = String(form.get("lesson_id") ?? "").trim() || null; const courseId = String(form.get("course_id") ?? "").trim() || null; if (!(file instanceof File) || !titleFr || !titleAr || (!lessonId && !courseId)) return NextResponse.json({ error: "Fichier, titres et contenu parent obligatoires." }, { status: 400 }); if (file.size > 50 * 1024 * 1024) return NextResponse.json({ error: "Le fichier dépasse 50 Mo." }, { status: 400 }); const allowed = ["application/pdf", "image/jpeg", "image/png", "image/webp", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]; if (!allowed.includes(file.type)) return NextResponse.json({ error: "Type de fichier non autorisé." }, { status: 400 }); const service = createServiceClient(); path = `admin/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`; const upload = await service.storage.from("lms-files").upload(path, file, { contentType: file.type, upsert: false }); if (upload.error) return NextResponse.json({ error: "Upload impossible." }, { status: 500 }); const inserted = await (service as any).from("lms_resources").insert({ lesson_id: lessonId, course_id: courseId, title_fr: titleFr, title_ar: titleAr, storage_path: path, mime_type: file.type, size_bytes: file.size }).select().single(); if (inserted.error) { await service.storage.from("lms-files").remove([path]); return NextResponse.json({ error: "Enregistrement de la ressource impossible." }, { status: 500 }); } return NextResponse.json({ resource: inserted.data }); } catch (error) { if (path) { try { await createServiceClient().storage.from("lms-files").remove([path]); } catch { /* best effort cleanup */ } } console.error("LMS resource upload failed:", error instanceof Error ? error.message : "unknown"); return NextResponse.json({ error: "Service LMS indisponible." }, { status: 503 }); } }
+export async function POST(request: Request) {
+  let path = "";
+  try {
+    if (!isSameOrigin(request)) return NextResponse.json({ error: "Origine non autorisée." }, { status: 403 });
+    await requireAdmin();
+    const form = await request.formData();
+    const file = form.get("file");
+    const titleFr = String(form.get("title_fr") ?? "").trim();
+    const titleAr = String(form.get("title_ar") ?? "").trim();
+    const lessonId = String(form.get("lesson_id") ?? "").trim() || null;
+    const courseId = String(form.get("course_id") ?? "").trim() || null;
+    if (!(file instanceof File) || !titleFr || !titleAr || (!lessonId && !courseId)) return NextResponse.json({ error: "Fichier, titres et contenu parent obligatoires." }, { status: 400 });
+    if (file.size > 50 * 1024 * 1024) return NextResponse.json({ error: "Le fichier dépasse 50 Mo." }, { status: 400 });
+    const allowed = ["application/pdf", "image/jpeg", "image/png", "image/webp", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+    if (!allowed.includes(file.type)) return NextResponse.json({ error: "Type de fichier non autorisé." }, { status: 400 });
+    const service = createServiceClient();
+    path = `admin/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
+    const upload = await service.storage.from("lms-files").upload(path, file, { contentType: file.type, upsert: false });
+    if (upload.error) return NextResponse.json({ error: "Upload impossible." }, { status: 500 });
+    const inserted = await service.from("lms_resources").insert({ lesson_id: lessonId, course_id: courseId, title_fr: titleFr, title_ar: titleAr, storage_path: path, mime_type: file.type, size_bytes: file.size, published: true }).select().single();
+    if (inserted.error) { await service.storage.from("lms-files").remove([path]); return NextResponse.json({ error: "Enregistrement de la ressource impossible." }, { status: 500 }); }
+    return NextResponse.json({ resource: inserted.data });
+  } catch (error) {
+    if (path) { try { await createServiceClient().storage.from("lms-files").remove([path]); } catch { /* best effort cleanup */ } }
+    console.error("LMS resource upload failed:", error instanceof Error ? error.message : "unknown");
+    return NextResponse.json({ error: "Service LMS indisponible." }, { status: 503 });
+  }
+}
