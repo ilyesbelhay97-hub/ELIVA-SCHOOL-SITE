@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect -- initialize auth query state from the browser URL once. */
 
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";

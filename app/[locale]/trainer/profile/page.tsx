@@ -1,0 +1,9 @@
+import Link from "next/link";
+import { requireLmsRole } from "@/lib/lms";
+import { getTrainerRating } from "@/lib/trainer-ratings";
+import TrainerProfileForm from "@/components/lms/trainer-profile-form";
+export const dynamic = "force-dynamic";
+export default async function TrainerProfilePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: rawLocale } = await params; const locale = rawLocale === "ar" ? "ar" : "fr"; const ar = locale === "ar"; const { profile } = await requireLmsRole("trainer", locale); const rating = profile?.trainer_id ? await getTrainerRating(profile.trainer_id) : { average_rating: null, review_count: 0 }; const ratingLabel = rating.review_count ? `${rating.average_rating}/5 · ${rating.review_count} ${ar ? "تقييم" : "avis"}` : (ar ? "مدرب جديد" : "Nouveau formateur");
+  return <main dir={ar ? "rtl" : "ltr"} className="min-h-screen bg-background"><header className="bg-ink px-5 py-5 text-white"><div className="mx-auto flex max-w-5xl justify-between"><Link href={`/${locale}/trainer`} className="text-sm text-white/70">← {ar ? "لوحة المدرب" : "Tableau de bord"}</Link><span className="font-semibold tracking-[0.08em]">Meritify <span className="text-gold">ACADEMY</span></span></div></header><section className="mx-auto max-w-5xl px-5 py-10"><p className="eyebrow text-gold-dark">{ar ? "ملفي الشخصي" : "Mon profil"}</p><h1 className="mt-3 text-4xl font-semibold">{ar ? "ملف المدرب المهني" : "Profil professionnel"}</h1><div className="mt-5 rounded-2xl bg-ink p-5 text-white"><p className="text-sm text-gold">{ar ? "التقييم العام" : "Note publique"}</p><p className="mt-2 text-2xl font-semibold">{rating.review_count ? "★" : "☆"} {ratingLabel}</p></div><p className="mt-3 max-w-2xl text-ink/60">{ar ? "احفظ التعديلات لإرسالها إلى الإدارة للمراجعة قبل نشرها." : "Enregistrez vos changements pour les soumettre à l’administration avant publication."}</p><TrainerProfileForm locale={locale}/></section></main>;
+}

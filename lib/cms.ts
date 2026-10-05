@@ -36,7 +36,7 @@ export async function getCmsCourse(slug: string) {
 export async function getCmsTrainers() {
   const supabase = await createClient();
   const result = await supabase.from("public_trainers_cms").select("*").order("public_order").order("full_name");
-  return { ...result, data: result.data?.map((trainer) => ({ ...trainer, public_photo_path: getTrainerImage(trainer.public_slug ?? "", trainer.public_photo_path) })) ?? null };
+  return { ...result, data: result.data?.map((trainer) => { const path = getTrainerImage(trainer.public_slug ?? "", trainer.public_photo_path); const publicPhoto = path?.startsWith("trainers/") ? supabase.storage.from("trainer-profile-images").getPublicUrl(path).data.publicUrl : path; return { ...trainer, public_photo_path: publicPhoto }; }) ?? null };
 }
 
 export function cmsCourseToLocalized(course: CmsCourse, locale: Locale) {
